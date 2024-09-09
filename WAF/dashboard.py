@@ -1,13 +1,13 @@
 '''Implements a simple dashboard for WAF. This dashboard can be used for analizing the performed request to the server.'''
 
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from request import DBController
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import dash_table
+from dash import dash_table
 from dash.dependencies import Input, Output
 import numpy as np
 from flask import Flask, render_template
@@ -52,7 +52,7 @@ def configure_columns(name):
     return config
 
 def generate_table(df, label):
-    if label == None:
+    if label is None:
         data_to_use = df
     elif label == 'attack':
         data_to_use = df[df['threat_type'] != 'valid']
@@ -62,27 +62,27 @@ def generate_table(df, label):
         data_to_use = df[df['location'] == label]
 
     return dash_table.DataTable(
-            id = 'data_table',
-            columns=[configure_columns(i) for i in data_to_use.drop(['id', 'log_id', 'request'], axis = 1).columns],
-            data = data_to_use.drop(['id', 'log_id', 'request'], axis = 1).to_dict('records'),
-            style_cell={
-                'overflow': 'hidden',
-                'textOverflow': 'ellipsis',
-                'maxWidth': 0,
-            },
-            tooltip_data=[
-                {
-                    'request': {'value': str(row['request']), 'type':'markdown'}
-                } for row in data_to_use.to_dict('rows')
-            ],
-            tooltip_duration = None,
-            #style_table={'overflowX': 'auto'},
-            page_action="native",
-            page_current= 0,
-            page_size= 10,
-            filter_action = 'native',
-            cell_selectable = False
-        )
+        id='data_table',
+        columns=[configure_columns(i) for i in data_to_use.drop(['id', 'log_id', 'request'], axis=1).columns],
+        data=data_to_use.drop(['id', 'log_id', 'request'], axis=1).to_dict(orient='records'),  # Fix orient parameter
+        style_cell={
+            'overflow': 'hidden',
+            'textOverflow': 'ellipsis',
+            'maxWidth': 0,
+        },
+        tooltip_data=[
+            {
+                'request': {'value': str(row['request']), 'type': 'markdown'}
+            } for row in data_to_use.to_dict('records')
+        ],
+        tooltip_duration=None,
+        page_action="native",
+        page_current=0,
+        page_size=10,
+        filter_action='native',
+        cell_selectable=False
+    )
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -95,7 +95,7 @@ app.layout = html.Div(children=[
         html.H1(children='WAF Dashboard'),
 
         html.Div(children='''
-            Dashboard for simple WAF created in Python!
+           
         ''')
     ]),
     
